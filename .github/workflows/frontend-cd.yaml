@@ -14,6 +14,26 @@ env:
   EKS_CLUSTER: cluster
 
 jobs:
+  lint:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.14.2
+
+      - name: Install dependencies
+        working-directory: starter/frontend
+        run: npm ci
+
+      - name: Run lint
+        working-directory: starter/frontend
+        run: npm run lint
+
   test:
     runs-on: ubuntu-22.04
 
@@ -36,7 +56,7 @@ jobs:
 
   build-and-deploy:
     runs-on: ubuntu-22.04
-    needs: test
+    needs: [lint, test]
 
     steps:
       - name: Checkout code
